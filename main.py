@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 DATABASE_URL = os.getenv('DATABASE_URL')
 
+# ==================== COMMAND HANDLERS ====================
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
@@ -28,50 +30,142 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/search - Cari produk\n"
         "/cart - Lihat keranjang belanja\n"
         "/orders - Lihat pesanan\n"
+        "/wishlist - Daftar favorit\n"
+        "/profile - Info profil\n"
         "/help - Bantuan\n"
     )
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
     help_text = """
-🤖 **KlikIndomaret Bot Help**
+🤖 *KlikIndomaret Bot Help*
 
-**Fitur Utama:**
-1. `/login` - Login dengan akun KlikIndomaret
-2. `/search <keyword>` - Cari produk (contoh: /search beras)
-3. `/cart` - Lihat isi keranjang
-4. `/orders` - Riwayat pesanan
-5. `/wishlist` - Daftar favorit
-6. `/profile` - Info profil
-7. `/logout` - Keluar akun
+*Fitur Utama:*
+1\. `/login` \- Login dengan akun KlikIndomaret
+2\. `/search <keyword>` \- Cari produk \(contoh: /search beras\)
+3\. `/cart` \- Lihat isi keranjang
+4\. `/orders` \- Riwayat pesanan
+5\. `/wishlist` \- Daftar favorit
+6\. `/profile` \- Info profil
+7\. `/logout` \- Keluar akun
 
-**Contoh Penggunaan:**
-- /search beras
-- /cart
-- /orders
+*Contoh Penggunaan:*
+\- /search beras
+\- /cart
+\- /orders
 
 Butuh bantuan? Hubungi @support_klikindomaret
     """
-    await update.message.reply_text(help_text, parse_mode='Markdown')
+    await update.message.reply_text(help_text, parse_mode='MarkdownV2')
+
+async def login_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /login command"""
+    await update.message.reply_text(
+        "🔐 *Login KlikIndomaret*\n\n"
+        "Silakan pilih metode login:\n"
+        "1️⃣ Email + Password\n"
+        "2️⃣ No. HP + OTP\n\n"
+        "Kirim: `login email` atau `login phone`",
+        parse_mode='MarkdownV2'
+    )
+
+async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /search command"""
+    if not context.args:
+        await update.message.reply_text(
+            "🔍 *Search Produk*\n\n"
+            "Gunakan: `/search <keyword>`\n"
+            "Contoh: `/search beras`",
+            parse_mode='MarkdownV2'
+        )
+        return
+    
+    keyword = ' '.join(context.args)
+    await update.message.reply_text(
+        f"🔍 Mencari produk: *{keyword}*\n\n"
+        "⏳ Sedang mencari...\n"
+        "(Fitur ini sedang dalam pengembangan)",
+        parse_mode='MarkdownV2'
+    )
+
+async def cart_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /cart command"""
+    await update.message.reply_text(
+        "🛒 *Keranjang Belanja*\n\n"
+        "Keranjang Anda kosong\n\n"
+        "Gunakan `/search` untuk mencari produk",
+        parse_mode='MarkdownV2'
+    )
+
+async def orders_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /orders command"""
+    await update.message.reply_text(
+        "📦 *Riwayat Pesanan*\n\n"
+        "Anda belum memiliki pesanan\n\n"
+        "Login terlebih dahulu dengan `/login`",
+        parse_mode='MarkdownV2'
+    )
+
+async def wishlist_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /wishlist command"""
+    await update.message.reply_text(
+        "❤️ *Daftar Favorit*\n\n"
+        "Daftar favorit Anda kosong\n\n"
+        "Gunakan `/search` untuk mencari produk",
+        parse_mode='MarkdownV2'
+    )
+
+async def profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /profile command"""
+    user = update.effective_user
+    await update.message.reply_text(
+        f"👤 *Profil*\n\n"
+        f"Nama: {user.first_name}\n"
+        f"Username: @{user.username}\n"
+        f"ID: `{user.id}`\n\n"
+        "Status: Belum login\n\n"
+        "Gunakan `/login` untuk login ke KlikIndomaret",
+        parse_mode='MarkdownV2'
+    )
+
+async def logout_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /logout command"""
+    await update.message.reply_text(
+        "👋 Anda telah logout\n\n"
+        "Gunakan `/login` untuk login kembali"
+    )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle regular messages."""
     text = update.message.text
-    await update.message.reply_text(f"Pesan Anda: {text}\n\nGunakan perintah /help untuk bantuan")
+    await update.message.reply_text(
+        f"Pesan: {text}\n\n"
+        "Gunakan perintah `/help` untuk bantuan"
+    )
+
+# ==================== MAIN FUNCTION ====================
 
 def main() -> None:
     """Start the bot."""
     # Create the Application
     application = Application.builder().token(BOT_TOKEN).build()
 
-    # on different commands - answer in Telegram
+    # Add command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("login", login_command))
+    application.add_handler(CommandHandler("search", search_command))
+    application.add_handler(CommandHandler("cart", cart_command))
+    application.add_handler(CommandHandler("orders", orders_command))
+    application.add_handler(CommandHandler("wishlist", wishlist_command))
+    application.add_handler(CommandHandler("profile", profile_command))
+    application.add_handler(CommandHandler("logout", logout_command))
 
-    # on non command i.e message - echo the message on Telegram
+    # Add message handler
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Run the bot
+    logger.info("Bot is running...")
     application.run_polling()
 
 if __name__ == '__main__':
