@@ -1,127 +1,112 @@
-# 🤖 KlikIndomaret Telegram Bot
+# 🤖 Telegram Bot + Gemini AI
 
-Bot Telegram canggih untuk KlikIndomaret dengan fitur login, pencarian produk, keranjang belanja, checkout, dan tracking pesanan.
+Bot Telegram yang terintegrasi dengan Google Gemini AI, siap deploy ke Railway.
 
-## ✨ Fitur Utama
+## ✨ Fitur
 
-- 🔐 **Login Akun** - Support email/phone + OTP
-- 🔍 **Search Produk** - Cari produk dengan filter
-- 🛒 **Keranjang Belanja** - Manage cart dengan mudah
-- 💳 **Checkout** - Multiple payment methods
-- 📦 **Tracking Pesanan** - Real-time order tracking
-- ❤️ **Wishlist** - Simpan produk favorit
-- 👤 **Profile** - Manage akun
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.9+
-- PostgreSQL 12+
-- Telegram Bot Token (dari @BotFather)
-
-### Installation
-
-1. **Clone repository:**
-```bash
-git clone https://github.com/padlimiGunakan/botkita.git
-cd botkita
-```
-
-2. **Create virtual environment:**
-```bash
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Setup environment variables:**
-```bash
-cp .env.example .env
-# Edit .env dengan kredensial Anda
-```
-
-5. **Run locally:**
-```bash
-python main.py
-```
-
-## 📊 Database Setup
-
-```bash
-# Create database
-createdb botkita_db
-
-# Update DATABASE_URL di .env
-DATABASE_URL=postgresql://username:password@localhost:5432/botkita_db
-```
-
-## 🚂 Deploy ke Railway
-
-1. **Push ke GitHub:**
-```bash
-git add .
-git commit -m "Initial commit"
-git push
-```
-
-2. **Deploy di Railway:**
-   - Buka https://railway.app
-   - Click "New Project" → "Deploy from GitHub repo"
-   - Pilih repository `botkita`
-   - Add PostgreSQL database
-   - Set environment variables di Railway dashboard
-   - Deploy!
-
-## 📝 Perintah Bot
-
-```
-/start - Mulai bot
-/help - Bantuan
-/login - Login akun
-/search <keyword> - Cari produk
-/cart - Lihat keranjang
-/orders - Riwayat pesanan
-/wishlist - Daftar favorit
-/profile - Info profil
-/logout - Keluar akun
-```
-
-## 🔧 Troubleshooting
-
-### Bot tidak respond
-- Pastikan TELEGRAM_BOT_TOKEN benar
-- Check logs: `python main.py` (development mode)
-
-### Database connection error
-- Verify DATABASE_URL di .env
-- Pastikan PostgreSQL running
-- Check username/password
-
-### Railway deployment failed
-- Check Railway logs
-- Verify environment variables
-- Pastikan Procfile atau CMD di Dockerfile benar
-
-## 📚 Tech Stack
-
-- **Bot Framework**: python-telegram-bot
-- **Database**: PostgreSQL + SQLAlchemy
-- **Hosting**: Railway
-- **Language**: Python 3.11
-
-## 📄 License
-
-MIT License - See LICENSE file
-
-## 🤝 Support
-
-- Email: support@botkita.dev
-- Telegram: @support_botkita
+- Chat AI dengan Google Gemini (memori percakapan per user)
+- Perintah: `/start`, `/new`, `/help`, `/about`
+- Otomatis reset sesi dengan `/new`
+- Mendukung pesan panjang (auto-split 4096 karakter)
+- Deploy mudah ke Railway
 
 ---
 
-Made with ❤️ by padlimiGunakan
+## 🚀 Deploy ke Railway (Step by Step)
+
+### 1. Siapkan Token & API Key
+
+**Telegram Bot Token:**
+1. Buka Telegram → cari `@BotFather`
+2. Kirim `/newbot` → ikuti instruksi
+3. Salin token yang diberikan
+
+**Gemini API Key:**
+1. Buka [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+2. Klik **"Create API Key"**
+3. Salin API key
+
+---
+
+### 2. Upload ke GitHub
+
+```bash
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/USERNAME/REPO_NAME.git
+git push -u origin main
+```
+
+---
+
+### 3. Deploy ke Railway
+
+1. Buka [https://railway.app](https://railway.app) → Login dengan GitHub
+2. Klik **"New Project"** → **"Deploy from GitHub repo"**
+3. Pilih repository kamu
+4. Railway akan otomatis mendeteksi konfigurasi
+
+---
+
+### 4. Set Environment Variables di Railway
+
+Di dashboard Railway → tab **"Variables"** → tambahkan:
+
+| Variable | Value |
+|---|---|
+| `TELEGRAM_TOKEN` | Token dari BotFather |
+| `GEMINI_API_KEY` | API Key dari AI Studio |
+| `GEMINI_MODEL` | `gemini-1.5-flash` *(opsional)* |
+
+---
+
+### 5. Deploy!
+
+Setelah variabel diset, Railway akan otomatis redeploy.
+Cek log di tab **"Deployments"** → lihat:
+```
+Bot started with model: gemini-1.5-flash
+```
+Bot siap digunakan! 🎉
+
+---
+
+## 🛠️ Jalankan Lokal (Opsional)
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Buat file .env dari contoh
+cp .env.example .env
+# Edit .env → isi TELEGRAM_TOKEN dan GEMINI_API_KEY
+
+# Jalankan
+python bot.py
+```
+
+---
+
+## 📁 Struktur File
+
+```
+telegram-gemini-bot/
+├── bot.py              # Kode utama bot
+├── requirements.txt    # Dependencies Python
+├── Procfile            # Untuk Railway/Heroku
+├── railway.toml        # Konfigurasi Railway
+├── .env.example        # Contoh environment variables
+├── .gitignore
+└── README.md
+```
+
+---
+
+## 🔧 Ganti Model Gemini
+
+Set environment variable `GEMINI_MODEL` dengan salah satu:
+- `gemini-1.5-flash` – Cepat & gratis (default)
+- `gemini-1.5-pro` – Lebih pintar, lebih lambat
+- `gemini-2.0-flash` – Terbaru & cepat
